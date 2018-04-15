@@ -1,0 +1,7 @@
+# ide
+/.vscode/
+
+# rust
+/target
+**/*.rs.bk
+Cargo.lock
