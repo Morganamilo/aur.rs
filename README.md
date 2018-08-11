@@ -1,4 +1,4 @@
-[![travis-badge][]][travis] [![license-badge][]][license] [![docs-badge][]][docs]
+[![ci-badge][]][ci] [![license-badge][]][license] [![docs-badge][]][docs]
 
 # aur
 
@@ -89,11 +89,10 @@ match info.first() {
 
 [ISC][LICENSE.md].
 
-[LICENSE.md]: https://github.com/zeyla/aur.rs/blob/master/LICENSE.md
-[Arch User Repository]: https://aur.archlinux.org/
+[ci]: https://travis-ci.org/zeyla/aur.rs
+[ci-badge]: https://img.shields.io/travis/zeyla/aur.rs.svg?style=flat-square
+[docs]: https://docs.rs/crate/aur
 [docs-badge]: https://img.shields.io/badge/docs-online-2020ff.svg?style=flat-square
-[docs]: https://docs.rs/aur
-[license-badge]: https://img.shields.io/badge/license-ISC-blue.svg?style=flat-square
+[LICENSE.md]: https://github.com/zeyla/aur.rs/blob/master/LICENSE.md
 [license]: https://opensource.org/licenses/ISC
-[travis-badge]: https://img.shields.io/travis/zeyla/aur.rs.svg?style=flat-square
-[travis]: https://travis-ci.org/zeyla/aur.rs
+[license-badge]: https://img.shields.io/badge/license-ISC-blue.svg?style=flat-square
