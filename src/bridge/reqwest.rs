@@ -8,10 +8,8 @@
 
 use constants::API_URI;
 use model::{InfoResult, Search, SearchResult};
-use std::{
-    fmt::{Display, Write},
-    io::Read,
-};
+use std::fmt::{Display, Write};
+use std::io::Read;
 use reqwest::{Client as ReqwestClient, RequestBuilder, StatusCode, Url};
 use serde::de::DeserializeOwned;
 use serde_json;
