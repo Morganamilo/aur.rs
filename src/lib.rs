@@ -1,3 +1,5 @@
+//! [![ci-badge][]][ci] [![license-badge][]][license] [![docs-badge][]][docs]
+//!
 //! # aur
 //!
 //! `aur` is a package for interacting with the [Arch User Repository] RPC API.
@@ -121,6 +123,13 @@
 //! ISC.
 //!
 //! [Arch User Repository]: https://aur.archlinux.org/
+//! [ci]: https://travis-ci.org/zeyla/aur.rs
+//! [ci-badge]: https://img.shields.io/travis/zeyla/aur.rs.svg?style=flat-square
+//! [docs]: https://docs.rs/crate/aur
+//! [docs-badge]: https://img.shields.io/badge/docs-online-2020ff.svg?style=flat-square
+//! [LICENSE.md]: https://github.com/zeyla/aur.rs/blob/master/LICENSE.md
+//! [license]: https://opensource.org/licenses/ISC
+//! [license-badge]: https://img.shields.io/badge/license-ISC-blue.svg?style=flat-square
 #![deny(missing_docs)]
 
 #[macro_use] extern crate serde_derive;
