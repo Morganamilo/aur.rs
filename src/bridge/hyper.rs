@@ -8,17 +8,13 @@
 
 use constants::API_URI;
 use futures::{Future, Stream, future};
-use hyper::{
-    client::{Client as HyperClient, Connect},
-    error::Error as HyperError,
-    Uri,
-};
+use hyper::client::{Client as HyperClient, Connect};
+use hyper::error::Error as HyperError;
+use hyper::Uri;
 use model::{InfoResult, Search, SearchResult};
 use serde_json;
-use std::{
-    fmt::{Display, Write},
-    str::FromStr,
-};
+use std::fmt::{Display, Write};
+use std::str::FromStr;
 use Error;
 
 macro_rules! try_uri {

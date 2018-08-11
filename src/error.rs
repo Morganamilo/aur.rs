@@ -1,9 +1,7 @@
 use serde_json::Error as JsonError;
-use std::{
-    error::Error as StdError,
-    fmt::{Display, Error as FmtError, Formatter, Result as FmtResult},
-    result::Result as StdResult,
-};
+use std::error::Error as StdError;
+use std::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
+use std::result::Result as StdResult;
 
 #[cfg(feature = "hyper")]
 use hyper::error::{Error as HyperError, UriError};
