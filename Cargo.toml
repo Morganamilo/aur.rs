@@ -1,5 +1,5 @@
 [package]
-authors = ["Zeyla Hellyer <zeylahellyer@gmail.com>"]
+authors = ["Zeyla Hellyer <hi@zeyla.me>"]
 categories = ["api-bindings", "web-programming::http-client"]
 description = "HTTP client implementations for the AUR."
 documentation = "https://docs.rs/aur"
