@@ -8,4 +8,4 @@ rust:
   - nightly
 sudo: false
 script:
-  - cargo test
+  - cargo test --all-features
