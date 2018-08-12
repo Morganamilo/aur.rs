@@ -38,43 +38,42 @@
 //! Asynchronously request information for the `rust-nightly` package:
 //!
 //! ```rust
-//! # #[cfg(feature = "tokio_core")]
+//! # #[cfg(feature = "tokio")]
+//! mod inner {
 //! extern crate aur;
-//! # #[cfg(feature = "tokio_core")]
 //! extern crate hyper;
-//! # #[cfg(feature = "tokio_core")]
 //! extern crate hyper_tls;
-//! # #[cfg(feature = "tokio_core")]
-//! extern crate tokio_core;
+//! extern crate tokio;
 //!
-//! # #[cfg(feature = "tokio_core")]
-//! # fn try_main() -> Result<(), Box<::std::error::Error>> {
+//! #     fn main() -> Result<(), Box<::std::error::Error>> {
 //! #
 //! use aur::bridge::hyper::AurRequester;
 //! use hyper::Client;
 //! use hyper::net::HttpsConnector;
 //! use hyper_tls::NativeTlsClient;
-//! use tokio_core::Core;
 //!
-//! let core = Core::new();
-//! let handle = core.handle();
-//! let connector = HttpsConnector::new(4, &handle)?;
-//! let client = Client::configure().connector(connector).build(&handle);
+//! let connector = HttpsConnector::new(4);
+//! let client = Client::builder().build(connector);
 //!
 //! let done = client.aur_search(Some("rust-nightly"), None).map(|search| {
 //!     assert!(search.result_count >= 2);
-//! }).map_err(|_| ());
+//! }).map_err(|why| {
+//!     println!("Error getting rust-nightly info: {:?}", why);
+//! });
 //!
-//! core.run(done)?;
-//! #     Ok(())
+//! tokio::run(done);
+//! #
+//! #         Ok(())
+//! #     }
 //! # }
 //! #
-//! # #[cfg(not(feature = "tokio_core"))]
-//! # fn try_main() -> Result<(), ()> { Ok(()) }
-//! #
+//! # #[cfg(feature = "tokio")]
 //! # fn main() {
-//! #     try_main().unwrap();
+//! #     inner::main().unwrap();
 //! # }
+//! #
+//! # #[cfg(not(feature = "tokio"))]
+//! # fn main() {}
 //! ```
 //!
 //! Synchronously request information for the `rust-nightly` package:

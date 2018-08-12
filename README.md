@@ -42,22 +42,23 @@ Asynchronously request information for the `rust-nightly` package:
 ```rust
 extern crate aur;
 extern crate hyper;
-extern crate hyper_tls;
+extern crate hyper_rustls;
 extern crate tokio_core;
 
 use aur::bridge::hyper::AurRequester;
 use hyper::Client;
-use tokio_core::HttpsConnector;
-use tokio_core::Core;
+use hyper_rustls::HttpsConnector;
 
-let core = Core::new()?;
-let handle = core.handle();
-let connector = HttpsConnector::new(4, &handle)?;
-let client = Client::configure().connector(connector).build(&handle);
+let connector = HttpsConnector::new(4);
+let client = Client::builder().build(connector);
 
 let done = client.aur_search(Some("rust-nightly"), None).map(|search| {
     assert!(search.result_count >= 2);
-}).map_err(|_| ());
+}).map_err(|why| {
+    println!("Error getting rust-nightly info: {:?}", why);
+});
+
+tokio::run(done);
 ```
 
 Synchronously request information for the `rust-nightly` package:
