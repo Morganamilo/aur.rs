@@ -9,19 +9,17 @@ use futures::Future;
 use hyper::client::HttpConnector;
 use hyper::{Body, Client};
 use hyper_tls::HttpsConnector;
-use tokio_core::reactor::{Core, Handle};
+use tokio_core::reactor::Core;
 
 #[inline]
-fn client(handle: &Handle) -> Client<HttpsConnector<HttpConnector>, Body> {
-	Client::configure()
-		.connector(HttpsConnector::new(4, handle).unwrap())
-		.build(handle)
+fn client() -> Client<HttpsConnector<HttpConnector>, Body> {
+	Client::builder().build(HttpsConnector::new(4).unwrap())
 }
 
 #[test]
 fn test_info() {
 	let mut core = Core::new().unwrap();
-	let client = client(&core.handle());
+	let client = client();
 
 	let done = client.aur_info(&["rust-nightly"]).map(|search| {
         assert_eq!(search.result_count, 1);
@@ -33,7 +31,7 @@ fn test_info() {
 #[test]
 fn test_search() {
 	let mut core = Core::new().unwrap();
-	let client = client(&core.handle());
+	let client = client();
 
 	let done = client.aur_search(Some("rust"), None).map(|search| {
         assert!(search.result_count >= 2);

@@ -8,20 +8,21 @@
 
 use constants::API_URI;
 use futures::{Future, Stream, future};
-use hyper::client::{Client as HyperClient, Connect};
-use hyper::error::Error as HyperError;
-use hyper::Uri;
+use hyper::body::Body;
+use hyper::client::connect::Connect;
+use hyper::client::Client as HyperClient;
+use hyper::{Request, Uri};
 use model::{InfoResult, Search, SearchResult};
 use serde_json;
 use std::fmt::{Display, Write};
 use std::str::FromStr;
 use Error;
 
-macro_rules! try_uri {
-    ($uri:ident) => {
-        match Uri::from_str($uri) {
+macro_rules! ftry {
+    ($code:expr) => {
+        match $code {
             Ok(v) => v,
-            Err(why) => return Box::new(future::err(Error::Uri(why))),
+            Err(why) => return Box::new(future::err(From::from(why))),
         }
     }
 }
@@ -132,8 +133,10 @@ pub trait AurRequester {
         -> Box<Future<Item = Search<SearchResult>, Error = Error>>;
 }
 
-impl<B, C: Connect> AurRequester for HyperClient<C, B>
-    where B: Stream<Error = HyperError> + 'static, B::Item: AsRef<[u8]> {
+impl<C> AurRequester for HyperClient<C, Body>
+    where C: Connect + Sync + 'static,
+          C::Future: 'static,
+          C::Transport: 'static {
     fn aur_info<T: Display>(&self, packages: &[T])
         -> Box<Future<Item = Search<InfoResult>, Error = Error>> {
         let mut url = format!("{}&type=info", API_URI);
@@ -145,10 +148,13 @@ impl<B, C: Connect> AurRequester for HyperClient<C, B>
         }
 
         let c = &url;
-        let uri = try_uri!(c);
+        let uri = ftry!(Uri::from_str(c));
 
-        Box::new(self.get(uri)
-            .and_then(|res| res.body().concat2())
+        let mut request = Request::get(uri);
+        let req = ftry!(request.body(Body::empty()));
+
+        Box::new(self.request(req)
+            .and_then(|res| res.into_body().concat2())
             .map_err(From::from)
             .and_then(|body| serde_json::from_slice(&body).map_err(From::from)))
     }
@@ -168,10 +174,13 @@ impl<B, C: Connect> AurRequester for HyperClient<C, B>
         }
 
         let c = &url;
-        let uri = try_uri!(c);
+        let uri = ftry!(Uri::from_str(c));
 
-        Box::new(self.get(uri)
-            .and_then(|res| res.body().concat2())
+        let mut request = Request::get(uri);
+        let req = ftry!(request.body(Body::empty()));
+
+        Box::new(self.request(req)
+            .and_then(|res| res.into_body().concat2())
             .map_err(From::from)
             .and_then(|body| serde_json::from_slice(&body).map_err(From::from)))
     }

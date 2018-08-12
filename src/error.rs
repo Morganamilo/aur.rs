@@ -3,8 +3,12 @@ use std::error::Error as StdError;
 use std::fmt::{Display, Error as FmtError, Formatter, Result as FmtResult};
 use std::result::Result as StdResult;
 
+#[cfg(feature = "http")]
+use http::uri::InvalidUri;
+#[cfg(feature = "http")]
+use http::Error as HttpError;
 #[cfg(feature = "hyper")]
-use hyper::error::{Error as HyperError, UriError};
+use hyper::error::Error as HyperError;
 #[cfg(feature = "reqwest")]
 use reqwest::{
     Error as ReqwestError,
@@ -23,6 +27,9 @@ pub enum Error {
     /// An error from the `serde_json` crate while deserializing the body of an
     /// HTTP response.
     Json(JsonError),
+    /// An error from the `http` crate.
+    #[cfg(feature = "http")]
+    Http(HttpError),
     /// An error from the `hyper` crate while performing an HTTP request.
     #[cfg(feature = "hyper")]
     Hyper(HyperError),
@@ -38,10 +45,9 @@ pub enum Error {
     /// An error indicating a parsing issue when using `reqwest`.
     #[cfg(feature = "reqwest")]
     ReqwestParse(ReqwestUrlError),
-    /// An error when building a request's URI from the `hyper` crate when it is
-    /// enabled.
-    #[cfg(feature = "hyper")]
-    Uri(UriError),
+    /// An error when building a request's URI from the `http` crate.
+    #[cfg(feature = "http")]
+    Uri(InvalidUri),
 }
 
 impl Display for Error {
@@ -54,6 +60,8 @@ impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
             Error::Fmt(ref inner) => inner.description(),
+            #[cfg(feature = "http")]
+            Error::Http(ref inner) => inner.description(),
             #[cfg(feature = "hyper")]
             Error::Hyper(ref inner) => inner.description(),
             Error::Json(ref inner) => inner.description(),
@@ -65,7 +73,7 @@ impl StdError for Error {
             Error::ReqwestInvalid(_) => "Request invalid",
             #[cfg(feature = "reqwest")]
             Error::ReqwestParse(ref inner) => inner.description(),
-            #[cfg(feature = "hyper")]
+            #[cfg(feature = "http")]
             Error::Uri(ref inner) => inner.description(),
         }
     }
@@ -83,10 +91,24 @@ impl From<JsonError> for Error {
     }
 }
 
+#[cfg(feature = "http")]
+impl From<HttpError> for Error {
+    fn from(err: HttpError) -> Self {
+        Error::Http(err)
+    }
+}
+
 #[cfg(feature = "hyper")]
 impl From<HyperError> for Error {
     fn from(err: HyperError) -> Self {
         Error::Hyper(err)
+    }
+}
+
+#[cfg(feature = "http")]
+impl From<InvalidUri> for Error {
+    fn from(err: InvalidUri) -> Error {
+        Error::Uri(err)
     }
 }
 
@@ -101,12 +123,5 @@ impl From<ReqwestError> for Error {
 impl From<ReqwestUrlError> for Error {
     fn from(err: ReqwestUrlError) -> Self {
         Error::ReqwestParse(err)
-    }
-}
-
-#[cfg(feature = "hyper")]
-impl From<UriError> for Error {
-    fn from(err: UriError) -> Error {
-        Error::Uri(err)
     }
 }
