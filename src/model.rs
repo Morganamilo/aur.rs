@@ -2,7 +2,7 @@
 
 /// Result data for a search.
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Search<T> {
+pub struct Search<T: Send + Sync> {
     /// A list of relevant results.
     pub results: Vec<T>,
     /// The number of results in the [`results`] field.

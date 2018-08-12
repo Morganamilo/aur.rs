@@ -84,7 +84,7 @@ pub trait AurRequester {
     /// [`Error::Json`]: ../../enum.Error.html#variant.Json
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
     fn aur_info<T: Display>(&self, packages: &[T])
-        -> Box<Future<Item = Search<InfoResult>, Error = Error>>;
+        -> Box<Future<Item = Search<InfoResult>, Error = Error> + Send>;
 
     /// Searches for packages by a query, optionally filtering by maintainer
     /// name.
@@ -130,7 +130,7 @@ pub trait AurRequester {
     /// [`Error::Json`]: ../../enum.Error.html#variant.Json
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
     fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
-        -> Box<Future<Item = Search<SearchResult>, Error = Error>>;
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>;
 }
 
 impl<C> AurRequester for HyperClient<C, Body>
@@ -138,7 +138,7 @@ impl<C> AurRequester for HyperClient<C, Body>
           C::Future: 'static,
           C::Transport: 'static {
     fn aur_info<T: Display>(&self, packages: &[T])
-        -> Box<Future<Item = Search<InfoResult>, Error = Error>> {
+        -> Box<Future<Item = Search<InfoResult>, Error = Error> + Send + 'static> {
         let mut url = format!("{}&type=info", API_URI);
 
         for package in packages {
@@ -160,7 +160,7 @@ impl<C> AurRequester for HyperClient<C, Body>
     }
 
     fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
-        -> Box<Future<Item = Search<SearchResult>, Error = Error>> {
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send + 'static> {
         let mut url = format!("{}&type=search", API_URI);
 
         if let Some(query) = query {
