@@ -7,7 +7,7 @@
 //! [`AurRequester`]: trait.AurRequester.html
 
 use constants::API_URI;
-use model::{InfoResult, Search, SearchResult};
+use model::{InfoResult, Search, SearchBy, SearchResult};
 use std::fmt::{Display, Write};
 use std::io::Read;
 use reqwest::{Client as ReqwestClient, RequestBuilder, StatusCode, Url};
@@ -143,7 +143,7 @@ pub trait AurRequester {
     /// [`Error::ReqwestInvalid`]: ../../enum.Error.html#variant.ReqwestInvalid
     /// [`Error::ReqwestParse`]: ../../enum.Error.html#variant.ReqwestParse
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
-    fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
+    fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Result<Search<SearchResult>>;
 }
 
@@ -161,20 +161,9 @@ impl AurRequester for ReqwestClient {
         handle_request::<Search<InfoResult>>(&mut self.get(uri))
     }
 
-    fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
+    fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Result<Search<SearchResult>> {
-        let mut url = format!("{}&type=search", API_URI);
-
-        if let Some(query) = query {
-            url.push_str("&arg=");
-            url.push_str(query);
-        }
-
-        if let Some(maintainer) = maintainer {
-            url.push_str("&maintainer=");
-            url.push_str(maintainer);
-        }
-
+        let url = format!("{}&type=search&arg={}&by={}", API_URI, query, by);
         let uri = Url::parse(&url)?;
 
         handle_request::<Search<SearchResult>>(&mut self.get(uri))
