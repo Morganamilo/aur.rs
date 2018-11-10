@@ -158,7 +158,7 @@ impl AurRequester for ReqwestClient {
 
         let uri = Url::parse(&url)?;
 
-        handle_request::<Search<InfoResult>>(&mut self.get(uri))
+        handle_request::<Search<InfoResult>>(self.get(uri))
     }
 
     fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
@@ -177,16 +177,16 @@ impl AurRequester for ReqwestClient {
 
         let uri = Url::parse(&url)?;
 
-        handle_request::<Search<SearchResult>>(&mut self.get(uri))
+        handle_request::<Search<SearchResult>>(self.get(uri))
     }
 }
 
-fn handle_request<T: DeserializeOwned>(request: &mut RequestBuilder) -> Result<T> {
+fn handle_request<T: DeserializeOwned>(request: RequestBuilder) -> Result<T> {
     let response = request.send()?;
 
     match response.status() {
-        StatusCode::Ok => {},
-        StatusCode::BadRequest => {
+        StatusCode::OK => {},
+        StatusCode::BAD_REQUEST => {
             return Err(Error::ReqwestBad(Box::new(response)));
         },
         _ => return Err(Error::ReqwestInvalid(Box::new(response))),
