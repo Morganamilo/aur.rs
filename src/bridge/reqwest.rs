@@ -145,6 +145,19 @@ pub trait AurRequester {
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
     fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Result<Search<SearchResult>>;
+
+    fn aur_search(&self, query: &str)
+        -> Result<Search<SearchResult>>
+    {
+        self.aur_search_by(query, SearchBy::NameDesc)
+    }
+
+    fn aur_orphans(&self)
+        -> Result<Search<SearchResult>>
+    {
+        self.aur_search_by("", SearchBy::Maintainer)
+    }
+
 }
 
 impl AurRequester for ReqwestClient {

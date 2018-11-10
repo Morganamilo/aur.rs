@@ -131,6 +131,18 @@ pub trait AurRequester {
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
     fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>;
+
+    fn aur_search(&self, query: &str)
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>
+    {
+        self.aur_search_by(query, SearchBy::NameDesc)
+    }
+
+    fn aur_orphans(&self)
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>
+    {
+        self.aur_search_by("", SearchBy::Maintainer)
+    }
 }
 
 impl<C> AurRequester for HyperClient<C, Body>
