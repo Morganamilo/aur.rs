@@ -1,5 +1,33 @@
 //! Models mapping the API.
 
+use std::fmt;
+
+#[derive(Copy, Clone, Debug)]
+pub enum SearchBy {
+    Name,
+    NameDesc,
+    Maintainer,
+    Depends,
+    MakeDepends,
+    CheckDepends,
+    OptDepends,
+}
+
+impl fmt::Display for SearchBy {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        fmt.write_str(match self {
+            SearchBy::Name => "name",
+            SearchBy::NameDesc => "name-desc",
+            SearchBy::Maintainer => "maintainer",
+            SearchBy::Depends => "depends",
+            SearchBy::MakeDepends => "makedepends",
+            SearchBy::OptDepends => "optdepends",
+            SearchBy::CheckDepends => "checkdepends",
+        })?;
+        Ok(())
+    }
+}
+
 /// Result data for a search.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Search<T: Send + Sync> {

@@ -12,7 +12,7 @@ use hyper::body::Body;
 use hyper::client::connect::Connect;
 use hyper::client::Client as HyperClient;
 use hyper::{Request, Uri};
-use model::{InfoResult, Search, SearchResult};
+use model::{InfoResult, Search, SearchBy, SearchResult};
 use serde_json;
 use std::fmt::{Display, Write};
 use std::str::FromStr;
@@ -129,8 +129,20 @@ pub trait AurRequester {
     /// [`Error::Hyper`]: ../../enum.Error.html#variant.Hyper
     /// [`Error::Json`]: ../../enum.Error.html#variant.Json
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
-    fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
+    fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>;
+
+    fn aur_search(&self, query: &str)
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>
+    {
+        self.aur_search_by(query, SearchBy::NameDesc)
+    }
+
+    fn aur_orphans(&self)
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>
+    {
+        self.aur_search_by("", SearchBy::Maintainer)
+    }
 }
 
 impl<C> AurRequester for HyperClient<C, Body>
@@ -159,20 +171,9 @@ impl<C> AurRequester for HyperClient<C, Body>
             .and_then(|body| serde_json::from_slice(&body).map_err(From::from)))
     }
 
-    fn aur_search(&self, query: Option<&str>, maintainer: Option<&str>)
+    fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send + 'static> {
-        let mut url = format!("{}&type=search", API_URI);
-
-        if let Some(query) = query {
-            url.push_str("&arg=");
-            url.push_str(query);
-        }
-
-        if let Some(maintainer) = maintainer {
-            url.push_str("&maintainer=");
-            url.push_str(maintainer);
-        }
-
+        let url = format!("{}&type=search&arg={}&by={}", API_URI, query, by);
         let c = &url;
         let uri = ftry!(Uri::from_str(c));
 
