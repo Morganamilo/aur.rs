@@ -86,8 +86,55 @@ pub trait AurRequester {
     fn aur_info<T: Display>(&self, packages: &[T])
         -> Box<Future<Item = Search<InfoResult>, Error = Error> + Send>;
 
-    /// Searches for packages by a query, optionally filtering by maintainer
-    /// name.
+    /// Searches for packages by a query, searching by maintainer name.
+    ///
+    /// # Examples
+    ///
+    /// Ensure that at least two packages return for the `"rust"` query,
+    /// searching by name:
+    ///
+    /// ```rust,ignore
+    /// extern crate aur;
+    /// extern crate hyper;
+    /// extern crate hyper_tls;
+    /// extern crate tokio_core;
+    ///
+    /// use aur::{
+    ///     bridge::hyper::AurRequester,
+    ///     model::SearchBy,
+    /// };
+    /// use hyper::Client;
+    /// use hyper_tls::HttpsConnector;
+    /// use tokio_core::Core;
+    ///
+    /// let handle = core.handle();
+    /// let connector = HttpsConnector::new(4, handle)?;
+    /// let client = Client::configure().connector(connector).build(&handle);
+    ///
+    /// let done = client.aur_search("rust", SearchBy::Name).map(|search| {
+    ///     assert!(search.result_count >= 2);
+    /// }).map_err(|_| ());
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Resolves to [`Error::Fmt`] if there was an error formatting the URI.
+    ///
+    /// Resolves to [`Error::Hyper`] if there was an error sending the request.
+    ///
+    /// Resolves to [`Error::Json`] if there was an error deserializing the
+    /// response body.
+    ///
+    /// Resolves to [`Error::Uri`] if there was an error parsing the Uri.
+    ///
+    /// [`Error::Fmt`]: ../../enum.Error.html#variant.Fmt
+    /// [`Error::Hyper`]: ../../enum.Error.html#variant.Hyper
+    /// [`Error::Json`]: ../../enum.Error.html#variant.Json
+    /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
+    fn aur_search_by(&self, query: &str, by: SearchBy)
+        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>;
+
+    /// Search for packages by a query.
     ///
     /// # Examples
     ///
@@ -129,15 +176,53 @@ pub trait AurRequester {
     /// [`Error::Hyper`]: ../../enum.Error.html#variant.Hyper
     /// [`Error::Json`]: ../../enum.Error.html#variant.Json
     /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
-    fn aur_search_by(&self, query: &str, by: SearchBy)
-        -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>;
-
     fn aur_search(&self, query: &str)
         -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>
     {
         self.aur_search_by(query, SearchBy::NameDesc)
     }
 
+    /// Search for a list of orphaned packages.
+    ///
+    /// # Examples
+    ///
+    /// Retrieve a list of orphaned packages:
+    ///
+    /// ```rust,ignore
+    /// extern crate aur;
+    /// extern crate hyper;
+    /// extern crate hyper_tls;
+    /// extern crate tokio_core;
+    ///
+    /// use aur::bridge::hyper::AurRequester;
+    /// use hyper::Client;
+    /// use hyper_tls::HttpsConnector;
+    /// use tokio_core::Core;
+    ///
+    /// let handle = core.handle();
+    /// let connector = HttpsConnector::new(4, handle)?;
+    /// let client = Client::configure().connector(connector).build(&handle);
+    ///
+    /// let done = client.aur_orphans().map(|search| {
+    ///     println!("Orphaned packages: {}", search.result_count);
+    /// }).map_err(|_| ());
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Resolves to [`Error::Fmt`] if there was an error formatting the URI.
+    ///
+    /// Resolves to [`Error::Hyper`] if there was an error sending the request.
+    ///
+    /// Resolves to [`Error::Json`] if there was an error deserializing the
+    /// response body.
+    ///
+    /// Resolves to [`Error::Uri`] if there was an error parsing the Uri.
+    ///
+    /// [`Error::Fmt`]: ../../enum.Error.html#variant.Fmt
+    /// [`Error::Hyper`]: ../../enum.Error.html#variant.Hyper
+    /// [`Error::Json`]: ../../enum.Error.html#variant.Json
+    /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
     fn aur_orphans(&self)
         -> Box<Future<Item = Search<SearchResult>, Error = Error> + Send>
     {

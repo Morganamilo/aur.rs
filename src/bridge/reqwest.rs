@@ -91,14 +91,17 @@ pub trait AurRequester {
     ///
     /// # Examples
     ///
-    /// Ensure that at least two packages return for the `"rust"` query, not
-    /// specifying a maintainer:
+    /// Ensure that at least two packages return for the `"rust"` query,
+    /// searching by name.
     ///
     /// ```rust
     /// extern crate aur;
     /// extern crate reqwest;
     ///
-    /// use aur::bridge::reqwest::AurRequester;
+    /// use aur::{
+    ///     bridge::reqwest::AurRequester,
+    ///     model::SearchBy,
+    /// };
     /// use reqwest::Client;
     ///
     /// # use std::error::Error;
@@ -107,7 +110,7 @@ pub trait AurRequester {
     /// #
     /// let client = Client::new();
     ///
-    /// let search = client.aur_search(Some("rust-nightly"), None)?;
+    /// let search = client.aur_search_by("rust-nightly", SearchBy::Name)?;
     ///
     /// assert!(search.result_count >= 2);
     /// #     Ok(())
@@ -146,12 +149,73 @@ pub trait AurRequester {
     fn aur_search_by(&self, query: &str, by: SearchBy)
         -> Result<Search<SearchResult>>;
 
+    /// Search for packages by a query.
+    ///
+    /// # Examples
+    ///
+    /// Ensure that at least two packages return for the `"rust"` query, not
+    /// specifying a maintainer:
     fn aur_search(&self, query: &str)
         -> Result<Search<SearchResult>>
     {
         self.aur_search_by(query, SearchBy::NameDesc)
     }
 
+    /// Search for a list of orphaned packages.
+    ///
+    /// # Examples
+    ///
+    /// Retrieve a list of orphaned packages:
+    ///
+    /// ```rust
+    /// extern crate aur;
+    /// extern crate reqwest;
+    ///
+    /// use aur::bridge::reqwest::AurRequester;
+    /// use reqwest::Client;
+    ///
+    /// # use std::error::Error;
+    /// #
+    /// # fn try_main() -> Result<(), Box<Error>> {
+    /// #
+    /// let client = Client::new();
+    ///
+    /// let search = client.aur_orphans()?;
+    ///
+    /// println!("Orphaned packages: {}", search.result_count);
+    /// #     Ok(())
+    /// # }
+    /// #
+    /// # fn main() {
+    /// #     try_main().unwrap();
+    /// # }
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Fmt`] if there was an error formatting the URI.
+    ///
+    /// Returns [`Error::Json`] if there was an error deserializing the
+    /// response body.
+    ///
+    /// Returns [`Error::Reqwest`] if there was an error sending the request.
+    ///
+    /// Returns [`Error::ReqwestBad`] if the response status code was a 400.
+    ///
+    /// Returns [`Error::ReqwestInvalid`] if the request was invalid.
+    ///
+    /// Returns [`Error::ReqwestParse`] if there was a parsing issue with the
+    /// response.
+    ///
+    /// Returns [`Error::Uri`] if there was an error parsing the Uri.
+    ///
+    /// [`Error::Fmt`]: ../../enum.Error.html#variant.Fmt
+    /// [`Error::Json`]: ../../enum.Error.html#variant.Json
+    /// [`Error::Reqwest`]: ../../enum.Error.html#variant.Reqwest
+    /// [`Error::ReqwestBad`]: ../../enum.Error.html#variant.ReqwestBad
+    /// [`Error::ReqwestInvalid`]: ../../enum.Error.html#variant.ReqwestInvalid
+    /// [`Error::ReqwestParse`]: ../../enum.Error.html#variant.ReqwestParse
+    /// [`Error::Uri`]: ../../enum.Error.html#variant.Uri
     fn aur_orphans(&self)
         -> Result<Search<SearchResult>>
     {

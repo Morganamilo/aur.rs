@@ -2,14 +2,22 @@
 
 use std::fmt;
 
+/// Indicator of how to perform a search.
 #[derive(Copy, Clone, Debug)]
 pub enum SearchBy {
+    /// Indicator to search by name, ascending.
     Name,
+    /// Indicator to search by name, descending.
     NameDesc,
+    /// Indicator to search by maintainer.
     Maintainer,
+    /// Indicator to search by depended packages.
     Depends,
+    /// Indicator to search by make-depended packages.
     MakeDepends,
+    /// Indicator to search by check-depended packages.
     CheckDepends,
+    /// Indicator to search by optionally-depended packages.
     OptDepends,
 }
 
