@@ -99,5 +99,5 @@ match info.first() {
 [LICENSE.md]: https://github.com/zeyla/aur.rs/blob/master/LICENSE.md
 [license]: https://opensource.org/licenses/ISC
 [license-badge]: https://img.shields.io/badge/license-ISC-blue.svg?style=flat-square
-[rust badge]: https://img.shields.io/badge/rust-1.26+-93450a.svg?style=flat-square
-[rust link]: https://blog.rust-lang.org/2018/05/10/Rust-1.26.html
+[rust badge]: https://img.shields.io/badge/rust-1.29+-93450a.svg?style=flat-square
+[rust link]: https://blog.rust-lang.org/2018/05/10/Rust-1.29.html
