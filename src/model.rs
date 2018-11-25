@@ -7,7 +7,7 @@ use std::fmt;
 pub enum SearchBy {
     /// Indicator to search by name, ascending.
     Name,
-    /// Indicator to search by name, descending.
+    /// Indicator to search by description.
     NameDesc,
     /// Indicator to search by maintainer.
     Maintainer,
