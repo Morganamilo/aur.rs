@@ -103,6 +103,9 @@ pub struct SearchResult {
 /// A result for a search _with_ additional information metadata.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InfoResult {
+    /// The packages that this package depends upon to run tests at build time.
+    #[serde(default, rename = "CheckDepends")]
+    pub check_dependencies: Vec<String>,
     /// A list of package names that conflicts with this package.
     #[serde(default, rename = "Conflicts")]
     pub conflicts: Vec<String>,
@@ -115,6 +118,9 @@ pub struct InfoResult {
     /// When the package was first submitted.
     #[serde(rename = "FirstSubmitted")]
     pub first_submitted: u64,
+    /// The groups this package belongs to.
+    #[serde(default, rename = "Groups")]
+    pub groups: Vec<String>,
     /// The ID of the package.
     #[serde(rename = "ID")]
     pub id: u64,
@@ -157,6 +163,9 @@ pub struct InfoResult {
     /// A list of packages this provides for.
     #[serde(default, rename = "Provides")]
     pub provides: Vec<String>,
+    /// A list of packages this package replaces.
+    #[serde(default, rename = "Replaces")]
+    pub replaces: Vec<String>,
     /// URL to the package's project home.
     #[serde(default, rename = "URL")]
     pub url: Option<String>,
