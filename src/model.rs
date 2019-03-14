@@ -57,7 +57,7 @@ pub struct Search<T: Send + Sync> {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SearchResult {
     /// A longer description of the package.
-    #[serde(rename = "Description")]
+    #[serde(default, rename = "Description")]
     pub description: Option<String>,
     /// When the package was first submitted.
     #[serde(rename = "FirstSubmitted")]
@@ -69,7 +69,7 @@ pub struct SearchResult {
     #[serde(rename = "LastModified")]
     pub last_modified: u64,
     /// The name of the package's maintainer.
-    #[serde(rename = "Maintainer")]
+    #[serde(default, rename = "Maintainer")]
     pub maintainer: Option<String>,
     /// The name of the package.
     #[serde(rename = "Name")]
@@ -78,7 +78,7 @@ pub struct SearchResult {
     #[serde(rename = "NumVotes")]
     pub num_votes: u64,
     /// When the package was marked as out-of-date.
-    #[serde(rename = "OutOfDate")]
+    #[serde(default, rename = "OutOfDate")]
     pub out_of_date: Option<u64>,
     /// The name of the base package.
     #[serde(rename = "PackageBase")]
@@ -90,7 +90,7 @@ pub struct SearchResult {
     #[serde(rename = "Popularity")]
     pub popularity: f64,
     /// URL to the package's project home.
-    #[serde(rename = "URL")]
+    #[serde(default, rename = "URL")]
     pub url: Option<String>,
     /// Path to the package's snapshot tar.
     #[serde(rename = "URLPath")]
@@ -107,10 +107,10 @@ pub struct InfoResult {
     #[serde(default, rename = "Conflicts")]
     pub conflicts: Vec<String>,
     /// The packages that this package depends upon.
-    #[serde(rename = "Depends")]
+    #[serde(default, rename = "Depends")]
     pub dependencies: Vec<String>,
     /// A longer description of the package.
-    #[serde(rename = "Description")]
+    #[serde(default, rename = "Description")]
     pub description: Option<String>,
     /// When the package was first submitted.
     #[serde(rename = "FirstSubmitted")]
@@ -119,16 +119,16 @@ pub struct InfoResult {
     #[serde(rename = "ID")]
     pub id: u64,
     /// The keywords that the package has been marked with for queryability.
-    #[serde(rename = "Keywords")]
+    #[serde(default, rename = "Keywords")]
     pub keywords: Vec<String>,
     /// When the package was last modified.
     #[serde(rename = "LastModified")]
     pub last_modified: u64,
     /// The license(s) that the project is licensed under.
-    #[serde(rename = "License")]
+    #[serde(default, rename = "License")]
     pub license: Vec<String>,
     /// The name of the package's maintainer.
-    #[serde(rename = "Maintainer")]
+    #[serde(default, rename = "Maintainer")]
     pub maintainer: Option<String>,
     /// The list of dependencies to make the package.
     #[serde(default, rename = "MakeDepends")]
@@ -143,7 +143,7 @@ pub struct InfoResult {
     #[serde(default, rename = "OptDepends")]
     pub optional_dependencies: Vec<String>,
     /// When the package was marked as out-of-date.
-    #[serde(rename = "OutOfDate")]
+    #[serde(default, rename = "OutOfDate")]
     pub out_of_date: Option<u64>,
     /// The name of the base package.
     #[serde(rename = "PackageBase")]
@@ -158,7 +158,7 @@ pub struct InfoResult {
     #[serde(default, rename = "Provides")]
     pub provides: Vec<String>,
     /// URL to the package's project home.
-    #[serde(rename = "URL")]
+    #[serde(default, rename = "URL")]
     pub url: Option<String>,
     /// Path to the package's snapshot tar.
     #[serde(rename = "URLPath")]
